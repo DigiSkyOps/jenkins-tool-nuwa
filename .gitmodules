@@ -1,0 +1,18 @@
+[submodule "tools/asl"]
+	path = tools/asl
+	url = git@github.com:DigiSkyOps/jenkins-tool-asl.git
+[submodule "tasks/semver"]
+	path = tasks/semver
+	url = git@github.com:DigiSkyOps/jenkins-task-semver.git
+[submodule "tasks/ftpartifact"]
+	path = tasks/ftpartifact
+	url = git@github.com:DigiSkyOps/jenkins-task-ftpartifact.git
+[submodule "tasks/opspkg"]
+	path = tasks/opspkg
+	url = git@github.com:DigiSkyOps/jenkins-task-opspkg.git
+[submodule "tasks/cloudartifact"]
+	path = tasks/cloudartifact
+	url = git@github.com:DigiSkyOps/jenkins-task-cloudartifact.git
+[submodule "tasks/customtask"]
+	path = tasks/customtask
+	url = git@github.com:DigiSkyOps/jenkins-task-customtask.git

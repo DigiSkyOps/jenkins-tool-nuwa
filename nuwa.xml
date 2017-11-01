@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="nuwa" basedir="." default="usage">
+  <property environment="env"/>
+
+  <!-- load asl-config.xml 
+  tools/asl/tools/ant/bin/ant -f nuwa.xml 
+  -->
+  <property name="asl.root" location="${basedir}/tools/asl" />
+  <property name="asl.tasks.root" location="${basedir}/tasks" />
+
+  <import file="${asl.root}/scripts/asl-config.xml" />
+
+  <property name="dot.asl.dir" location="${ws.dir}/.asl" />
+  <property name="dot.ci.dir" location="${ws.dir}/.ci" />
+  <property file="${basedir}/arg.properties" />
+  <property name="scm.type" value="git" />
+
+  <target name="clean">
+    <delete dir="${dot.asl.dir}" failonerror="false" />
+    <delete dir="${dot.ci.dir}" failonerror="false" />
+    <delete dir="${reports}" failonerror="false" />
+    <delete dir="${artifacts.dir}" failonerror="false" />
+  </target>
+
+  <target name="upload-asl" depends="setup.asl">
+    <var name="ws.dir" value="${basedir}/tools/asl" />
+      <var name="fileset.dir" value="${ws.dir}" />
+      <var name="artifact.id" value="asl" />
+
+      <stage name="pkg">
+        <tasks>
+          <ci task="semver" />
+          <ci task="opspkg">
+            <properties>
+              <property name="fileset.includes" value="VERSION,.ci.yml,README.md,lib/**/*,scripts/**/*,tools/**/*" />
+            </properties>
+          </ci>
+          <ci task="${artifact.task.id}">
+            <properties>
+              <property name="fileset.includes" value="${artifact.id}-*.tar.gz" />
+            </properties>
+          </ci>
+        </tasks>
+      </stage>
+  </target>
+
+  <target name="upload-semver" depends="setup.asl">
+    <upload-task taskId="semver" filesetIncludes="VERSION,run.xml,README.md,.ci.yml" />
+  </target>
+
+  <target name="upload-opspkg" depends="setup.asl">
+    <upload-task taskId="opspkg" filesetIncludes="VERSION,run.xml,README.md,.ci.yml" />
+  </target>
+
+  <target name="upload-ftpartifact" depends="setup.asl">
+    <upload-task taskId="ftpartifact" filesetIncludes="VERSION,run.xml,macro/*.xml,convertor/*.xsl,README.md,.ci.yml" />
+  </target>
+
+  <target name="upload-customtask" depends="setup.asl">
+    <upload-task taskId="customtask" filesetIncludes="VERSION,run.xml,macro/*.xml,README.md,.ci.yml" />
+  </target>
+
+  <target name="upload-cloudartifact" depends="setup.asl">
+    <upload-task taskId="cloudartifact" filesetIncludes="VERSION,run.xml,macro/*.xml,tool/**/*,README.md,.ci.yml" />
+  </target>
+
+  <macrodef name="upload-task">
+    <attribute name="taskId" />
+    <attribute name="filesetIncludes" />
+    <sequential>
+      <var name="ws.dir" value="${asl.tasks.root}/@{taskId}" />
+      <var name="fileset.dir" value="${ws.dir}" />
+      <var name="artifact.id" value="@{taskId}" />
+
+      <stage name="pkg">
+        <tasks>
+          <ci task="semver" />
+          <ci task="opspkg">
+            <properties>
+              <property name="fileset.includes" value="@{filesetIncludes}" />
+            </properties>
+          </ci>
+          <ci task="${artifact.task.id}">
+            <properties>
+              <property name="fileset.includes" value="${artifact.id}-*.tar.gz" />
+            </properties>
+          </ci>
+        </tasks>
+      </stage>
+    </sequential>
+  </macrodef>
+</project>
